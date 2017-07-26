@@ -1,0 +1,96 @@
+scared [] shyguys = new scared[40];
+
+bowl tank;
+
+void setup (){
+  size (1000,1000);
+  tank = new bowl();
+  for (int i = 0; i< shyguys.length; i++){
+    shyguys[i] = new scared ();
+  }
+}
+
+void draw (){
+  background (0);
+  tank.render();
+  for (int i = 0; i< shyguys.length; i++){
+    shyguys[i].update();
+    shyguys[i].checkEdge();
+    shyguys[i].render();
+  }
+}
+
+class bowl {
+
+  float x,y,w,h, margin;
+  
+  bowl(){
+    margin = 100;
+    x = margin;
+    y = margin;
+    w = width-margin- x;
+    h = height-margin - y;
+    
+  }
+  
+  void update(){}
+  
+ void render(){
+  
+    stroke(255);
+    noFill();
+    rect(x,y,w,h);
+  
+  }
+
+}
+class scared {
+
+  PVector vel, loc, acc, noise;
+  float topspeed;
+  float delta, diameter;
+  scared(){
+    
+    loc = new PVector (random(width), random(height));
+    vel = new PVector (0,0);
+    acc = new PVector (0,0);
+    noise = new PVector (0,100000);
+    topspeed = 10;
+    diameter = 10;
+    
+  }
+  
+  void render (){
+    stroke(255);
+    noFill();
+    ellipse (loc.x, loc.y, diameter,diameter);
+  }
+  
+  void update (){
+    
+    PVector mouse = new PVector (mouseX, mouseY);
+    PVector dir = PVector.sub(mouse, loc);
+    dir.x += map(noise(noise.x), 0, 1,-100,100);
+    dir.y += map(noise(noise.y), 0, 1,-100,100);
+
+    delta =0.005*-dir.mag();
+    dir.normalize();
+    dir.mult(delta);
+    acc = dir;
+    vel.add(acc);
+    vel.limit(topspeed);
+    loc.add(vel);
+    noise.add(0.1,0.1);
+    
+  }
+  
+   void checkEdge(){
+  if (loc.x>width -tank.margin - diameter){loc.x=width-tank.margin- diameter;}
+  if (loc.y>height -tank.margin- diameter){loc.y=height-tank.margin- diameter;}
+
+  if (loc.x<tank.x+diameter){loc.x=tank.x+diameter;}
+  if (loc.y<tank.y+diameter){loc.y=tank.y+diameter;}
+
+  }
+  
+}
